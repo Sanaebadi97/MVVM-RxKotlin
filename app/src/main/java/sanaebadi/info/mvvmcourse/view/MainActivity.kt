@@ -6,7 +6,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import sanaebadi.info.mvvmcourse.R
+import sanaebadi.info.mvvmcourse.androidWrapper.NetworkManager
 import sanaebadi.info.mvvmcourse.databinding.ActivityMainBinding
+import sanaebadi.info.mvvmcourse.extension.MainViewModelFactory
 import sanaebadi.info.mvvmcourse.view.adapter.NameAdapter
 import sanaebadi.info.mvvmcourse.viewModel.MainViewModel
 
@@ -22,14 +24,17 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         adapter = NameAdapter(arrayListOf())
 
-        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(
+            this,
+            MainViewModelFactory(NetworkManager(this))
+        ).get(MainViewModel::class.java)
 
         binding.viewModel = mainViewModel
         binding.rvName.setHasFixedSize(true)
         binding.rvName.adapter = adapter
 
 
-        mainViewModel.names.observe(this, Observer { nameList->
+        mainViewModel.names.observe(this, Observer { nameList ->
             adapter.reloadData(nameList)
 
         })
