@@ -52,6 +52,11 @@ dependencies {
 
 
     //koin
-    def version_koin = "2.0.0"
-    implementation "org.koin:koin-android-viewmodel:$version_koin"
+    def version_koin = "2.0.1"
+    // Koin AndroidX Scope features
+    implementation "org.koin:koin-android-scope:$version_koin"
+// Koin AndroidX ViewModel features
+    implementation "org.koin:koin-androidx-viewmodel:$version_koin"
+// Koin AndroidX Experimental features
+    implementation "org.koin:koin-android-ext:$version_koin"
 }
