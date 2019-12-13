@@ -1,24 +1,21 @@
 package sanaebadi.info.mvvmcourse.repository
 
-import android.os.Handler
+import io.reactivex.Observable
 import sanaebadi.info.mvvmcourse.model.NameModel
-import sanaebadi.info.mvvmcourse.utilitis.RepositoryCallback
+import java.util.concurrent.TimeUnit
 
 class MainRepository {
 
-    fun loadData(repositoryCallBack: RepositoryCallback) {
-        Handler().postDelayed({
-            val nameList = ArrayList<NameModel>()
-            nameList.add(NameModel("sana"))
-            nameList.add(NameModel("Mahdi"))
-            nameList.add(NameModel("Sara"))
-            nameList.add(NameModel("Zahra"))
-            nameList.add(NameModel("Amir"))
+    fun loadData(): Observable<ArrayList<NameModel>> {
+        val nameList = ArrayList<NameModel>()
+        nameList.add(NameModel("sana"))
+        nameList.add(NameModel("Mahdi"))
+        nameList.add(NameModel("Sara"))
+        nameList.add(NameModel("Zahra"))
+        nameList.add(NameModel("Amir"))
 
-            repositoryCallBack.onDataFetched(nameList)
+        return Observable.just(nameList).delay(3, TimeUnit.SECONDS)
 
-
-        }, 3000)
     }
 }
 

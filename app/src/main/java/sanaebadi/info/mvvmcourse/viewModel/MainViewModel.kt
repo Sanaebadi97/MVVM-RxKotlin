@@ -1,26 +1,41 @@
 package sanaebadi.info.mvvmcourse.viewModel
 
-import androidx.databinding.ObservableField
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import sanaebadi.info.mvvmcourse.extension.plusAssign
 import sanaebadi.info.mvvmcourse.model.NameModel
 import sanaebadi.info.mvvmcourse.repository.MainRepository
-import sanaebadi.info.mvvmcourse.utilitis.RepositoryCallback
-import sanaebadi.info.mvvmcourse.utilitis.MainViewModelCallback
 
-class MainViewModel(private val mainViewModelCallback: MainViewModelCallback) :
-    RepositoryCallback {
-    var isLoading = ObservableField<Boolean>(false)
+class MainViewModel : ViewModel() {
+    var isLoading = MutableLiveData<Boolean>()
 
+    private val mainRepository: MainRepository = MainRepository()
+    private val compositeDisposable = CompositeDisposable()
+
+    val names = MutableLiveData<ArrayList<NameModel>>()
     fun loadData() {
-        val model = MainRepository()
-        isLoading.set(true)
-        model.loadData(this)
+        compositeDisposable += mainRepository.loadData().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { success: ArrayList<NameModel> ->
+                    names.value = success
 
+                },
+                { error ->
+                    Log.e("RX ERROR", "Loading $error")
+                }
+            )
     }
 
-    override fun onDataFetched(names: ArrayList<NameModel>) {
-        mainViewModelCallback.onDataFetched(names)
-        isLoading.set(false)
-
+    override fun onCleared() {
+        super.onCleared()
+        if (!compositeDisposable.isDisposed) {
+            compositeDisposable.dispose()
+        }
     }
 
 }
